@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "874809398169",
+    "project_id": "future-sale",
+    "storage_bucket": "future-sale.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874809398169:android:bc8b8c0295613184e63908",
+        "android_client_info": {
+          "package_name": "com.listlink.future_sale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874809398169-4c25dvk67k93s1abd1tpnvs13e5erpm2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.listlink.future_sale",
+            "certificate_hash": "cebbe039cc985e365cf924b83777e18c3a79fd55"
+          }
+        },
+        {
+          "client_id": "874809398169-1eritierurdpvi3s9u8dckcfdb5eitnu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6l7I3J5K0BgdYBcbBBPaJ4nAxNQyOk98"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874809398169-1eritierurdpvi3s9u8dckcfdb5eitnu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

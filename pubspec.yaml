@@ -1,0 +1,34 @@
+name: future_sale
+description: Future Sale MVP
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_icons: any
+  flutter_bloc: any
+  multi_image_picker: any
+  uuid: any
+
+  firebase_core: any
+  firebase_auth: any
+  firebase_analytics: any
+  firebase_messaging: any
+  firebase_storage: any
+  cloud_firestore: any
+  google_sign_in: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
