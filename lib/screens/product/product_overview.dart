@@ -51,7 +51,7 @@ class _ProductOverviewState extends State<ProductOverview> {
       future: _imageUrlsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final imagesUrls = snapshot.data;
+          final imagesUrls = snapshot.data ?? [];
 
           return Container(
             height: 320,
