@@ -1,6 +1,5 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:future_sale/models/models.dart';
 
 class ProductOverview extends StatefulWidget {
@@ -16,14 +15,13 @@ class ProductOverview extends StatefulWidget {
 }
 
 class _ProductOverviewState extends State<ProductOverview> {
-  final _imagesController = PageController(
-    initialPage: 0,
-  );
-  Future<List<String>> _imagesUrls;
+  Future<List<String>> _imageUrlsFuture;
 
   @override
   void initState() {
-    _imagesUrls = Future.wait(widget.product.images.map((e) => FirebaseStorage.instance.ref('/images/$e').getDownloadURL()).toList(growable: true));
+    _imageUrlsFuture = Future.wait(widget.product.images
+        .map((e) => FirebaseStorage.instance.ref('/images/$e').getDownloadURL())
+        .toList(growable: true));
 
     super.initState();
   }
@@ -39,6 +37,7 @@ class _ProductOverviewState extends State<ProductOverview> {
           mainAxisSize: MainAxisSize.max,
           children: [
             _buildGallery(),
+            _buildTitle(),
           ],
         ),
       ),
@@ -48,37 +47,58 @@ class _ProductOverviewState extends State<ProductOverview> {
   Widget _buildGallery() {
     final screenSize = MediaQuery.of(context).size;
 
-    return Container(
-      height: 320,
-      child: PageView(
-        controller: _imagesController,
-        children: widget.product.images.map((e) {
+    return FutureBuilder(
+      future: _imageUrlsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final imagesUrls = snapshot.data;
+
           return Container(
-            width: 320,
             height: 320,
-            child: FutureBuilder<String>(
-              future: FirebaseStorage.instance.ref('/images/$e').getDownloadURL(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-                  return Image(
-                    image: NetworkImage(snapshot.data),
+            child: PageView(
+              children: imagesUrls.map<Widget>((e) {
+                return Container(
+                  width: screenSize.width,
+                  child: Image(
+                    image: NetworkImage(e),
                     fit: BoxFit.cover,
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                return Center(
-                  child: Icon(MaterialCommunityIcons.image),
+                  ),
                 );
-              },
+              }).toList(growable: false),
             ),
           );
-        }).toList(growable: false),
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildTitle() {
+    final theme = Theme.of(context);
+    final price = widget.product.cost.toString().padLeft(1, '0');
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            widget.product.name,
+            style: theme.textTheme.headline4,
+          ),
+          Text(
+            '\$$price',
+            style: theme.textTheme.headline6,
+          ),
+        ],
       ),
     );
   }
