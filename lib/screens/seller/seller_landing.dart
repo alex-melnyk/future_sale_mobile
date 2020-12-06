@@ -15,7 +15,7 @@ class _SellerLandingState extends State<SellerLanding> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('John Smith'),
+        title: Text('Cindy Crawford'),
       ),
       body: ScreenContainer(
         child: SingleChildScrollView(
@@ -51,7 +51,7 @@ class _SellerLandingState extends State<SellerLanding> {
                         ),
                       ),
                       Text(
-                        'USA, LA, DOB',
+                        'USA, LA',
                         style: theme.textTheme.subtitle2.copyWith(
                           height: 1.5,
                           color: Palette.secondaryColor,
