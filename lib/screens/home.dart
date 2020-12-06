@@ -36,9 +36,7 @@ class _HomeState extends State<Home> {
           Padding(
             padding: EdgeInsets.only(right: 8.0),
             child: IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
+              onPressed: () {},
               icon: Icon(
                 SimpleLineIcons.handbag,
                 color: Color.fromRGBO(89, 115, 147, 1),

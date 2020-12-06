@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +17,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _firebaseAnalytics = FirebaseAnalytics();
   final Future<FirebaseApp> _firebaseInitFuture = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: _firebaseAnalytics),
+      ],
       title: 'Future Sale',
       theme: ThemeData(
         primarySwatch: Colors.blue,

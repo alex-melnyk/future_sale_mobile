@@ -18,6 +18,8 @@ dependencies:
 
   firebase_core: any
   firebase_auth: any
+  firebase_analytics: any
+  firebase_crashlytics: any
   firebase_storage: any
   cloud_firestore: any
   google_sign_in: any
