@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
         future: _firebaseInitFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return FirebaseAuth.instance.currentUser != null ? CatalogueList() : SignInLogin();
+            return FirebaseAuth.instance.currentUser != null ? Home() : SignInLogin();
           }
 
           return Scaffold(

@@ -3,6 +3,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:future_sale/modals/modals.dart' show showCategoriesModal;
+import 'package:future_sale/utils/palette.dart';
 import 'package:future_sale/widgets/widgets.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -16,6 +18,7 @@ class _GoodsCreateState extends State<GoodsCreate> {
   final _uuid = Uuid();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _categoryController = TextEditingController();
   final _priceController = TextEditingController();
   final _images = List<Asset>.generate(8, (index) => null);
 
@@ -24,14 +27,12 @@ class _GoodsCreateState extends State<GoodsCreate> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Add new'),
       ),
       body: ScreenContainer(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -60,10 +61,11 @@ class _GoodsCreateState extends State<GoodsCreate> {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: 8.0,
+        horizontal: 12.0,
+        vertical: 16.0,
       ),
       child: GridView.count(
-        crossAxisCount: 4,
+        crossAxisCount: 3,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: imagesList,
@@ -74,39 +76,34 @@ class _GoodsCreateState extends State<GoodsCreate> {
   Widget _buildImagePreview(int index, Asset image) {
     final theme = Theme.of(context);
 
+    final lastItem = index >= 7;
+
     return InkWell(
       borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
       onTap: _handleAddImagePressed,
       splashColor: theme.primaryColor.withOpacity(0.25),
       highlightColor: theme.primaryColor.withOpacity(0.15),
       child: Container(
-        margin: const EdgeInsets.all(8.0),
-        padding: const EdgeInsets.all(1.0),
+        margin: const EdgeInsets.all(4.0),
+        padding: EdgeInsets.all(2.0),
         decoration: BoxDecoration(
-          color: theme.primaryColor,
+          color: Palette.primaryColor,
           borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 2.0,
-            ),
-          ],
         ),
         child: Container(
-          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.all(const Radius.circular(7.0)),
+            color: lastItem ? Colors.white : Palette.primaryColor,
+            borderRadius: const BorderRadius.all(const Radius.circular(6.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 2.0,
+              ),
+            ],
           ),
           child: FutureBuilder<ByteData>(
             future: image != null ? image.getByteData(quality: 25) : null,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
               if (snapshot.connectionState == ConnectionState.done) {
                 return Image(
                   image: MemoryImage(snapshot.data.buffer.asUint8List()),
@@ -114,15 +111,43 @@ class _GoodsCreateState extends State<GoodsCreate> {
                 );
               }
 
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
               return Center(
-                child: index < 7
-                    ? Icon(
-                        MaterialCommunityIcons.image,
-                        color: theme.primaryColor,
+                child: lastItem
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            MaterialCommunityIcons.camera,
+                            color: Palette.secondaryColor,
+                            size: 48,
+                          ),
+                          Text(
+                            'Add photos',
+                            style: theme.textTheme.subtitle1.copyWith(
+                              height: 1.5,
+                              color: Palette.secondaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            '4 of 20',
+                            style: theme.textTheme.subtitle2.copyWith(
+                              height: 1.5,
+                              color: Palette.primaryColor,
+                            ),
+                          ),
+                        ],
                       )
                     : Icon(
-                        MaterialCommunityIcons.plus,
-                        color: theme.primaryColor,
+                        MaterialCommunityIcons.image,
+                        color: Colors.white,
+                        size: 64,
                       ),
               );
             },
@@ -134,34 +159,40 @@ class _GoodsCreateState extends State<GoodsCreate> {
 
   Widget _buildForm() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8.0,
-      ),
+      padding: const EdgeInsets.all(16),
       child: Form(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildTextField(
               _titleController,
-              label: 'Title',
-              placeholder: 'Title of the product',
+              label: 'Title*',
+              placeholder: 'E.g iPhone 8',
               maxLength: 100,
+              maxLines: 1,
+              helperText: 'Indicate brand, model',
             ),
             _buildTextField(
               _descriptionController,
-              label: 'Description',
-              placeholder: 'Describe what you want to sell',
+              label: 'Description*',
+              placeholder: 'Input text',
               maxLength: 500,
               maxLines: 5,
+              helperText: 'Add product features',
+            ),
+            _buildTextField(
+              _categoryController,
+              disabled: true,
+              label: 'Category*',
+              suffixIcon: Icon(MaterialCommunityIcons.chevron_down),
+              onPressed: _handleCategoriesPressed,
             ),
             _buildTextField(
               _priceController,
               label: 'Price',
               prefixText: '\$ ',
               placeholder: '199.99',
-              maxLength: 7,
               textInputType: TextInputType.numberWithOptions(
-                // signed: true,
                 decimal: true,
               ),
             ),
@@ -179,39 +210,52 @@ class _GoodsCreateState extends State<GoodsCreate> {
     int maxLines,
     TextInputType textInputType,
     String prefixText,
+    String helperText,
+    Widget suffixIcon,
+    VoidCallback onPressed,
+    bool disabled = false,
   }) {
-    final theme = Theme.of(context);
-
     return Container(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: TextField(
-        controller: controller,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          labelText: label,
-          hintText: placeholder,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          prefixText: prefixText,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              width: 1.0,
-              color: theme.primaryColor,
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: InkWell(
+        onTap: onPressed,
+        child: TextField(
+          enabled: !disabled,
+          controller: controller,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: placeholder,
+            helperText: helperText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            prefixText: prefixText,
+            suffixIcon: suffixIcon,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1.0,
+                color: Palette.primaryColor,
+              ),
+              borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
             ),
-            borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              width: 2.0,
-              color: theme.primaryColor,
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1.0,
+                color: Palette.primaryColor,
+              ),
+              borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
             ),
-            borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1.0,
+                color: Palette.secondaryColor,
+              ),
+              borderRadius: const BorderRadius.all(const Radius.circular(8.0)),
+            ),
           ),
+          maxLength: maxLength,
+          maxLines: maxLines,
+          keyboardType: textInputType,
         ),
-        maxLength: maxLength,
-        maxLines: maxLines,
-        keyboardType: textInputType,
       ),
     );
   }
@@ -266,6 +310,16 @@ class _GoodsCreateState extends State<GoodsCreate> {
     });
 
     Navigator.of(context).pop();
+  }
+
+  void _handleCategoriesPressed() async {
+    final category = await showCategoriesModal(context);
+
+    if (category != null) {
+      setState(() {
+        _categoryController.text = category;
+      });
+    }
   }
 
   @override
