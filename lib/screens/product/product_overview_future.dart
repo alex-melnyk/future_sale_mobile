@@ -5,8 +5,8 @@ import 'package:future_sale/models/models.dart';
 import 'package:future_sale/utils/palette.dart';
 import 'package:future_sale/widgets/widgets.dart';
 
-class ProductOverview extends StatefulWidget {
-  const ProductOverview({
+class ProductOverviewFuture extends StatefulWidget {
+  const ProductOverviewFuture({
     Key key,
     this.product,
   }) : super(key: key);
@@ -14,10 +14,10 @@ class ProductOverview extends StatefulWidget {
   final GoodBean product;
 
   @override
-  _ProductOverviewState createState() => _ProductOverviewState();
+  _ProductOverviewFutureState createState() => _ProductOverviewFutureState();
 }
 
-class _ProductOverviewState extends State<ProductOverview> {
+class _ProductOverviewFutureState extends State<ProductOverviewFuture> {
   Future<List<String>> _imageUrlsFuture;
 
   @override

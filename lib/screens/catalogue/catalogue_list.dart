@@ -66,6 +66,7 @@ class _CatalogueListState extends State<CatalogueList> {
             ),
             _buildSection(
               'Sale now',
+              sellNow: true,
             ),
           ],
         ),
@@ -73,7 +74,7 @@ class _CatalogueListState extends State<CatalogueList> {
     );
   }
 
-  Widget _buildSection(String sectionTitle) {
+  Widget _buildSection(String sectionTitle, {bool sellNow = false}) {
     final theme = Theme.of(context);
 
     return Column(
@@ -117,7 +118,7 @@ class _CatalogueListState extends State<CatalogueList> {
                   scrollDirection: Axis.horizontal,
                   itemCount: docsList.length,
                   itemBuilder: (context, index) {
-                    return _buildProductCard(docsList[index]);
+                    return _buildProductCard(docsList[index], sellNow);
                   },
                   separatorBuilder: (context, index) => SizedBox(width: 8.0),
                 );
@@ -246,7 +247,7 @@ class _CatalogueListState extends State<CatalogueList> {
     );
   }
 
-  Widget _buildProductCard(QueryDocumentSnapshot snapshot) {
+  Widget _buildProductCard(QueryDocumentSnapshot snapshot, bool sellNow) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
 
@@ -256,13 +257,25 @@ class _CatalogueListState extends State<CatalogueList> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => ProductOverview(
-            product: GoodBean(
-              name: snapshot.get('name') as String,
-              cost: double.parse(snapshot.get('cost').toString()),
-              images: images,
-            ),
-          ),
+          builder: (_) {
+            if (sellNow) {
+              return ProductOverviewNow(
+                product: GoodBean(
+                  name: snapshot.get('name') as String,
+                  cost: double.parse(snapshot.get('cost').toString()),
+                  images: images,
+                ),
+              );
+            } else {
+              return ProductOverviewFuture(
+                product: GoodBean(
+                  name: snapshot.get('name') as String,
+                  cost: double.parse(snapshot.get('cost').toString()),
+                  images: images,
+                ),
+              );
+            }
+          },
         ));
       },
       child: Container(
