@@ -30,6 +30,7 @@ class _CatalogueListState extends State<CatalogueList> {
           setState(() {
 
           });
+          return Future.delayed(Duration(seconds: 1));
         },
         child: SingleChildScrollView(
           padding: EdgeInsets.only(
