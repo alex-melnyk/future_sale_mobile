@@ -121,21 +121,53 @@ class _SellerLandingState extends State<SellerLanding> {
                           ],
                         ),
                       ),
-                      Container(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '20',
-                              style: theme.textTheme.headline6,
+                      Row(
+                        children: [
+                          Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '20',
+                                  style: theme.textTheme.headline6,
+                                ),
+                                Text(
+                                  'ECO points',
+                                  style: theme.textTheme.subtitle1,
+                                ),
+                              ],
                             ),
-                            Text(
-                              'ECO points',
-                              style: theme.textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                          SizedBox(width: 16,),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '54',
+                                    style: theme.textTheme.subtitle1.copyWith(
+                                      color: Palette.secondaryColor,
+                                    ),
+                                  ),
+                                  Icon(
+                                    MaterialCommunityIcons.account,
+                                    color: Palette.primaryColor,
+                                    size: 32,
+                                  )
+                                ],
+                              ),
+                              Text(
+                                'Followers',
+                                style: theme.textTheme.caption.copyWith(
+                                  color: Palette.secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
                     ],
                   )
                 ],

@@ -89,6 +89,15 @@ class _ProductOverviewNowState extends State<ProductOverviewNow> {
                 ),
               ),
               _buildSpecifications(),
+              Container(
+                margin: EdgeInsets.symmetric(
+                  vertical: 8,
+                ),
+                child: RaisedButton(
+                  onPressed: () {},
+                  child: Text('RECYCLE REQUEST'),
+                ),
+              ),
             ],
           ),
         ),
@@ -176,77 +185,48 @@ class _ProductOverviewNowState extends State<ProductOverviewNow> {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                '136',
-                style: theme.textTheme.subtitle1.copyWith(
-                  color: Palette.secondaryColor,
-                ),
-              ),
-              Icon(
-                MaterialCommunityIcons.heart,
-                color: Palette.primaryColor,
-                size: 32,
-              ),
-              Text(
-                'Likes',
-                style: theme.textTheme.caption.copyWith(
-                  color: Palette.secondaryColor,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '54',
+                    style: theme.textTheme.subtitle1.copyWith(
+                      color: Palette.secondaryColor,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(
+                    MaterialCommunityIcons.heart,
+                    color: Palette.primaryColor,
+                    size: 32,
+                  )
+                ],
               ),
             ],
-          ),
-          SizedBox(
-            width: 16,
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                '54',
+                'Seller',
+                style: theme.textTheme.headline6.copyWith(
+                  color: Palette.primaryColor,
+                ),
+              ),
+              Text(
+                'Susanna Won (USA, LA)',
                 style: theme.textTheme.subtitle1.copyWith(
                   color: Palette.secondaryColor,
                 ),
               ),
-              Icon(
-                MaterialCommunityIcons.account,
-                color: Palette.primaryColor,
-                size: 32,
-              ),
-              Text(
-                'Follow',
-                style: theme.textTheme.caption.copyWith(
-                  color: Palette.secondaryColor,
-                ),
-              ),
             ],
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Seller',
-                  style: theme.textTheme.headline6.copyWith(
-                    color: Palette.primaryColor,
-                  ),
-                ),
-                Text(
-                  'Susanna Won (USA, LA)',
-                  style: theme.textTheme.subtitle1.copyWith(
-                    color: Palette.secondaryColor,
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),

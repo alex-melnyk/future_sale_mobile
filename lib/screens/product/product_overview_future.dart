@@ -199,89 +199,60 @@ class _ProductOverviewFutureState extends State<ProductOverviewFuture> {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                '136',
-                style: theme.textTheme.subtitle1.copyWith(
-                  color: Palette.secondaryColor,
-                ),
-              ),
-              Icon(
-                MaterialCommunityIcons.heart,
-                color: Palette.primaryColor,
-                size: 32,
-              ),
-              Text(
-                'Likes',
-                style: theme.textTheme.caption.copyWith(
-                  color: Palette.secondaryColor,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '54',
+                    style: theme.textTheme.subtitle1.copyWith(
+                      color: Palette.secondaryColor,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(
+                    MaterialCommunityIcons.heart,
+                    color: Palette.primaryColor,
+                    size: 32,
+                  )
+                ],
               ),
             ],
-          ),
-          SizedBox(
-            width: 16,
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                '54',
-                style: theme.textTheme.subtitle1.copyWith(
-                  color: Palette.secondaryColor,
+                'Time frame for',
+                style: theme.textTheme.headline6.copyWith(
+                  color: Palette.primaryColor,
                 ),
               ),
-              Icon(
-                MaterialCommunityIcons.account,
-                color: Palette.primaryColor,
-                size: 32,
-              ),
-              Text(
-                'Follow',
-                style: theme.textTheme.caption.copyWith(
-                  color: Palette.secondaryColor,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sale: ',
+                    style: theme.textTheme.headline6.copyWith(
+                      color: Palette.secondaryColor,
+                    ),
+                  ),
+                  Text(
+                    '3-6 month',
+                    style: theme.textTheme.headline6.copyWith(
+                      color: Palette.secondaryColor,
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Time frame for',
-                  style: theme.textTheme.headline6.copyWith(
-                    color: Palette.primaryColor,
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Sale: ',
-                      style: theme.textTheme.headline6.copyWith(
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      '3-6 month',
-                      style: theme.textTheme.headline6.copyWith(
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
         ],
       ),
