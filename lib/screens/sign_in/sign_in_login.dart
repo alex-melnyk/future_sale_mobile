@@ -195,8 +195,12 @@ class _State extends State<SignInLogin> {
 
   void _handleGoogleSignIn() async {
     try {
-      // Trigger the authentication flow
       await GoogleSignIn().disconnect();
+    } on Exception catch (e) {}
+
+    try {
+      // Trigger the authentication flow
+
       final googleUser = await GoogleSignIn().signIn();
 
       // Obtain the auth details from the request

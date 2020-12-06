@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:future_sale/screens/catalogue/catalogue.dart';
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.only(right: 8.0),
             child: IconButton(
               onPressed: () {
-                // FirebaseAuth.instance.signOut();
+                FirebaseAuth.instance.signOut();
               },
               icon: Icon(
                 MaterialCommunityIcons.cart_outline,

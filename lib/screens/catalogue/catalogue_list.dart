@@ -368,7 +368,10 @@ class _CatalogueListState extends State<CatalogueList> {
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
-                      margin: const EdgeInsets.all(8.0),
+                      margin: const EdgeInsets.only(
+                        left: 8,
+                        bottom: 8,
+                      ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8.0,
                         vertical: 4.0,
