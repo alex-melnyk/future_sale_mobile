@@ -84,7 +84,7 @@ class _SignInConfirmState extends State<SignInConfirm> {
     Navigator.of(context)
       ..popUntil((route) => route.isFirst)
       ..pushReplacement(MaterialPageRoute(
-        builder: (_) => CatalogueList(),
+        builder: (_) => Home(),
       ));
   }
 

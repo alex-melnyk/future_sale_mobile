@@ -254,231 +254,234 @@ class _CatalogueListState extends State<CatalogueList> {
     final images = List<String>.from(snapshot.get('images') as List<dynamic>);
     final firstImage = images.first;
 
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) {
-            if (sellNow) {
-              return ProductOverviewNow(
-                product: GoodBean(
-                  name: snapshot.get('name') as String,
-                  cost: double.parse(snapshot.get('cost').toString()),
-                  images: images,
-                ),
-              );
-            } else {
-              return ProductOverviewFuture(
-                product: GoodBean(
-                  name: snapshot.get('name') as String,
-                  cost: double.parse(snapshot.get('cost').toString()),
-                  images: images,
-                ),
-              );
-            }
-          },
-        ));
-      },
-      child: Container(
-        width: (screenSize.width / 2) - 24,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
-        ),
-        foregroundDecoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
-          border: Border.all(
-            color: Palette.primaryColor,
-            width: 2.0,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) {
+              if (sellNow) {
+                return ProductOverviewNow(
+                  product: GoodBean(
+                    name: snapshot.get('name') as String,
+                    cost: double.parse(snapshot.get('cost').toString()),
+                    images: images,
+                  ),
+                );
+              } else {
+                return ProductOverviewFuture(
+                  product: GoodBean(
+                    name: snapshot.get('name') as String,
+                    cost: double.parse(snapshot.get('cost').toString()),
+                    images: images,
+                  ),
+                );
+              }
+            },
+          ));
+        },
+        child: Container(
+          width: (screenSize.width / 2) - 24,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 180,
+          foregroundDecoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
+            border: Border.all(
               color: Palette.primaryColor,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  FutureBuilder<String>(
-                    future: FirebaseStorage.instance.ref('/images/$firstImage').getDownloadURL(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-                        return Image(
-                          image: NetworkImage(snapshot.data),
-                          fit: BoxFit.cover,
-                        );
-                      }
+              width: 2.0,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 180,
+                color: Palette.primaryColor,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    FutureBuilder<String>(
+                      future: FirebaseStorage.instance.ref('/images/$firstImage').getDownloadURL(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+                          return Image(
+                            image: NetworkImage(snapshot.data),
+                            fit: BoxFit.cover,
+                          );
+                        }
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: Icon(
+                            MaterialIcons.image,
+                            size: 64,
+                            color: Colors.white,
+                          ),
                         );
-                      }
-
-                      return Center(
-                        child: Icon(
-                          MaterialIcons.image,
-                          size: 64,
-                          color: Colors.white,
-                        ),
-                      );
-                    },
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(8.0),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                MaterialCommunityIcons.camera,
-                                size: 15,
-                              ),
-                              SizedBox(
-                                width: 4.0,
-                              ),
-                              Text(images.length.toString()),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: Colors.lightGreen,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        )
-                      ],
+                      },
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Container(
-                      margin: const EdgeInsets.only(
-                        left: 8,
-                        bottom: 8,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white70,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                    Align(
+                      alignment: Alignment.topLeft,
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            MaterialCommunityIcons.alarm,
-                            size: 15,
+                          Container(
+                            margin: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 4.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white70,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  MaterialCommunityIcons.camera,
+                                  size: 15,
+                                ),
+                                SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text(images.length.toString()),
+                              ],
+                            ),
                           ),
-                          SizedBox(
-                            width: 4.0,
-                          ),
-                          Text('Use until 10.11.2020'),
+                          Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: Colors.lightGreen,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          )
                         ],
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    '\$100',
-                    style: theme.textTheme.subtitle1.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: Palette.secondaryColor,
-                    ),
-                  ),
-                  Text(
-                    'The Free People',
-                    style: theme.textTheme.subtitle2.copyWith(
-                      height: 1.5,
-                      fontWeight: FontWeight.w400,
-                      color: Palette.secondaryColor,
-                    ),
-                  ),
-                  Text(
-                    'Peasant Top Shirt',
-                    style: theme.textTheme.subtitle2.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: Palette.secondaryColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                    ),
-                    child: Text(
-                      'Los Angeles',
-                      style: theme.textTheme.caption.copyWith(
-                        color: Palette.primaryColor,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      InkWell(
-                        onTap: _handleSellerPressed,
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          left: 8,
+                          bottom: 8,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 4.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              MaterialCommunityIcons.account_circle,
-                              color: Palette.secondaryColor,
+                              MaterialCommunityIcons.alarm,
+                              size: 15,
                             ),
                             SizedBox(
-                              width: 8.0,
+                              width: 4.0,
                             ),
-                            Text(
-                              '5.0',
-                              style: theme.textTheme.bodyText2.copyWith(
-                                color: Palette.secondaryColor,
-                              ),
-                            ),
-                            Icon(
-                              MaterialCommunityIcons.star,
-                              color: Palette.primaryColor,
-                              size: 16.0,
-                            )
+                            Text('Use until 10.11.2020'),
                           ],
                         ),
                       ),
-                      Spacer(),
-                      Icon(
-                        MaterialCommunityIcons.heart_outline,
-                        color: Palette.secondaryColor,
-                        size: 20.0,
-                      ),
-                    ],
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      '\$100',
+                      style: theme.textTheme.subtitle1.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: Palette.secondaryColor,
+                      ),
+                    ),
+                    Text(
+                      'The Free People',
+                      style: theme.textTheme.subtitle2.copyWith(
+                        height: 1.5,
+                        fontWeight: FontWeight.w400,
+                        color: Palette.secondaryColor,
+                      ),
+                    ),
+                    Text(
+                      'Peasant Top Shirt',
+                      style: theme.textTheme.subtitle2.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: Palette.secondaryColor,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                      ),
+                      child: Text(
+                        'Los Angeles',
+                        style: theme.textTheme.caption.copyWith(
+                          color: Palette.primaryColor,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        InkWell(
+                          onTap: _handleSellerPressed,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                MaterialCommunityIcons.account_circle,
+                                color: Palette.secondaryColor,
+                              ),
+                              SizedBox(
+                                width: 8.0,
+                              ),
+                              Text(
+                                '5.0',
+                                style: theme.textTheme.bodyText2.copyWith(
+                                  color: Palette.secondaryColor,
+                                ),
+                              ),
+                              Icon(
+                                MaterialCommunityIcons.star,
+                                color: Palette.primaryColor,
+                                size: 16.0,
+                              )
+                            ],
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          MaterialCommunityIcons.heart_outline,
+                          color: Palette.secondaryColor,
+                          size: 20.0,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

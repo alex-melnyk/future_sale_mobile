@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:future_sale/screens/catalogue/catalogue.dart';
+import 'package:future_sale/screens/home.dart';
 import 'package:future_sale/screens/sign_in/sign_in_confirm.dart';
 import 'package:future_sale/widgets/screen_container.dart';
 import 'package:future_sale/widgets/widgets.dart';
@@ -215,7 +216,7 @@ class _State extends State<SignInLogin> {
       // Once signed in, return the UserCredential
       if (await FirebaseAuth.instance.signInWithCredential(credential) != null) {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => CatalogueList(),
+          builder: (_) => Home(),
         ));
       }
     } on Exception catch (e) {}
