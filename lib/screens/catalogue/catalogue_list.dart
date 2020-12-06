@@ -25,27 +25,34 @@ class _CatalogueListState extends State<CatalogueList> {
     final theme = Theme.of(context);
 
     return ScreenContainer(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          bottom: 50,
-        ),
-        clipBehavior: Clip.none,
-        child: Column(
-          children: [
-            _buildSearch(),
-            _buildFilters(),
-            _buildBanner(),
-            _buildSection(
-              'Future Sale',
-            ),
-            _buildSection(
-              'Bet Deals',
-            ),
-            _buildSection(
-              'Sale now',
-              sellNow: true,
-            ),
-          ],
+      child: RefreshIndicator(
+        onRefresh: () {
+          setState(() {
+
+          });
+        },
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            bottom: 50,
+          ),
+          clipBehavior: Clip.none,
+          child: Column(
+            children: [
+              _buildSearch(),
+              _buildFilters(),
+              _buildBanner(),
+              _buildSection(
+                'Future Sale',
+              ),
+              _buildSection(
+                'Bet Deals',
+              ),
+              _buildSection(
+                'Sale now',
+                sellNow: true,
+              ),
+            ],
+          ),
         ),
       ),
     );
