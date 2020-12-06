@@ -17,6 +17,7 @@ class CatalogueList extends StatefulWidget {
 
 class _CatalogueListState extends State<CatalogueList> {
   final random = Random();
+
   String _selectedCategory;
 
   @override
@@ -33,31 +34,7 @@ class _CatalogueListState extends State<CatalogueList> {
           children: [
             _buildSearch(),
             _buildFilters(),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              padding: const EdgeInsets.all(24.0),
-              width: double.infinity,
-              color: Palette.primaryColor,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Future Sale',
-                    style: theme.textTheme.subtitle1.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  RaisedButton(
-                    onPressed: () {},
-                    child: Text('Get start'),
-                  ),
-                ],
-              ),
-            ),
+            _buildBanner(),
             _buildSection(
               'Future Sale',
             ),
@@ -71,70 +48,6 @@ class _CatalogueListState extends State<CatalogueList> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSection(String sectionTitle, {bool sellNow = false}) {
-    final theme = Theme.of(context);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                sectionTitle,
-                style: theme.textTheme.subtitle1.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                'View all',
-                style: theme.textTheme.subtitle2.copyWith(
-                  fontWeight: FontWeight.w300,
-                  decoration: TextDecoration.underline,
-                ),
-              )
-            ],
-          ),
-        ),
-        Container(
-          height: 320,
-          child: FutureBuilder<QuerySnapshot>(
-            future: FirebaseFirestore.instance.collection('goods').get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                final docsList = snapshot.data.docs;
-
-                return ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                  ),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: docsList.length,
-                  itemBuilder: (context, index) {
-                    return _buildProductCard(docsList[index], sellNow);
-                  },
-                  separatorBuilder: (context, index) => SizedBox(width: 8.0),
-                );
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              return Container();
-            },
-          ),
-        )
-      ],
     );
   }
 
@@ -176,11 +89,97 @@ class _CatalogueListState extends State<CatalogueList> {
     );
   }
 
+  Widget _buildFilters() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _buildFilter(
+            MaterialCommunityIcons.grid,
+            'Categories',
+            onPressed: _handleCategoriesPressed,
+          ),
+          _buildFilter(
+            MaterialCommunityIcons.alarm,
+            'Future Sale',
+          ),
+          _buildFilter(
+            MaterialCommunityIcons.moon_new,
+            'Sale now',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBanner() {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      width: double.infinity,
+      height: 180,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Palette.primaryColor,
+        borderRadius: BorderRadius.circular(5)
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image(
+            image: AssetImage('assets/images/banner.png'),
+            fit: BoxFit.cover,
+          ),
+          Container(
+            padding: EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Future Sale',
+                  style: theme.textTheme.headline4,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8
+                  ),
+                  child: Text(
+                    'Sell today what you buy\ntomorrow',
+                    style: theme.textTheme.bodyText2,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8
+                    ),
+                    decoration: BoxDecoration(
+                      color: Palette.tertiaryColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text('START', style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildFilter(
-    Color color,
-    String label, {
-    VoidCallback onPressed,
-  }) {
+      IconData icon,
+      String label, {
+        VoidCallback onPressed,
+      }) {
     final theme = Theme.of(context);
 
     return Padding(
@@ -188,32 +187,39 @@ class _CatalogueListState extends State<CatalogueList> {
         horizontal: 4.0,
       ),
       child: Material(
-        borderRadius: BorderRadius.circular(20.0),
-        color: Palette.primaryColor.withOpacity(0.75),
+        borderRadius: BorderRadius.circular(20),
+        color: Palette.tertiaryColor.withOpacity(0.15),
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(25),
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
+              horizontal: 16,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Palette.tertiaryColor.withOpacity(0.5),
+                width: 1,
+              ),
             ),
             child: Row(
               children: [
-                Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                Icon(
+                  icon,
+                  size: 24,
+                  color: Palette.tertiaryColor,
                 ),
                 SizedBox(
                   width: 8.0,
                 ),
                 Text(
                   label,
-                  style: theme.textTheme.subtitle1.copyWith(fontWeight: FontWeight.w400, color: Palette.secondaryColor),
+                  style: theme.textTheme.subtitle1.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: Palette.tertiaryColor,
+                  ),
                 ),
               ],
             ),
@@ -223,27 +229,70 @@ class _CatalogueListState extends State<CatalogueList> {
     );
   }
 
-  Widget _buildFilters() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _buildFilter(
-            Colors.white,
-            'Categories',
-            onPressed: _handleCategoriesPressed,
+
+
+  Widget _buildSection(String sectionTitle, {bool sellNow = false}) {
+    final theme = Theme.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                sectionTitle,
+                style: theme.textTheme.subtitle1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                'View all',
+                style: theme.textTheme.subtitle2.copyWith(
+                  fontWeight: FontWeight.w300,
+                  decoration: TextDecoration.underline,
+                ),
+              )
+            ],
           ),
-          _buildFilter(
-            Colors.lightBlue,
-            'Future Sale',
+        ),
+        Container(
+          height: 326,
+          child: FutureBuilder<QuerySnapshot>(
+            future: FirebaseFirestore.instance.collection('goods').get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                final docsList = snapshot.data.docs;
+
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: docsList.length,
+                  itemBuilder: (context, index) {
+                    return _buildProductCard(docsList[index], sellNow);
+                  },
+                  separatorBuilder: (context, index) => SizedBox(width: 8.0),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return Container();
+            },
           ),
-          _buildFilter(
-            Colors.lightGreen,
-            'Sale now',
-          ),
-        ],
-      ),
+        )
+      ],
     );
   }
 
@@ -280,207 +329,230 @@ class _CatalogueListState extends State<CatalogueList> {
             },
           ));
         },
-        child: Container(
-          width: (screenSize.width / 2) - 24,
-          clipBehavior: Clip.antiAlias,
+        child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+              ),
+            ],
           ),
-          foregroundDecoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
-            border: Border.all(
-              color: Palette.primaryColor,
-              width: 2.0,
+          child: Container(
+            width: (screenSize.width / 2) - 24,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                ),
+              ],
             ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: double.infinity,
-                height: 180,
-                color: Palette.primaryColor,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    FutureBuilder<String>(
-                      future: FirebaseStorage.instance.ref('/images/$firstImage').getDownloadURL(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-                          return Image(
-                            image: NetworkImage(snapshot.data),
-                            fit: BoxFit.cover,
-                          );
-                        }
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 180,
+                  color: Palette.primaryColor,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      FutureBuilder<String>(
+                        future: FirebaseStorage.instance.ref('/images/$firstImage').getDownloadURL(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+                            return Image(
+                              image: NetworkImage(snapshot.data),
+                              fit: BoxFit.cover,
+                            );
+                          }
 
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
                           return Center(
-                            child: CircularProgressIndicator(),
+                            child: Icon(
+                              MaterialIcons.image,
+                              size: 64,
+                              color: Colors.white,
+                            ),
                           );
-                        }
-
-                        return Center(
-                          child: Icon(
-                            MaterialIcons.image,
-                            size: 64,
-                            color: Colors.white,
-                          ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(8.0),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                              vertical: 4.0,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white70,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  MaterialCommunityIcons.camera,
-                                  size: 15,
-                                ),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text(images.length.toString()),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: 16,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: Colors.lightGreen,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          )
-                        ],
+                        },
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                          left: 8,
-                          bottom: 8,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                          vertical: 4.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white70,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                      Align(
+                        alignment: Alignment.topLeft,
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              MaterialCommunityIcons.alarm,
-                              size: 15,
+                            Container(
+                              margin: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                                vertical: 4.0,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    MaterialCommunityIcons.camera,
+                                    size: 15,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 4.0,
+                                  ),
+                                  Text(
+                                    images.length.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: 4.0,
-                            ),
-                            Text('Use until 10.11.2020'),
+                            // Container(
+                            //   width: 16,
+                            //   height: 16,
+                            //   decoration: BoxDecoration(
+                            //     color: Colors.lightGreen,
+                            //     borderRadius: BorderRadius.circular(8.0),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      '\$100',
-                      style: theme.textTheme.subtitle1.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      'The Free People',
-                      style: theme.textTheme.subtitle2.copyWith(
-                        height: 1.5,
-                        fontWeight: FontWeight.w400,
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      'Peasant Top Shirt',
-                      style: theme.textTheme.subtitle2.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                      ),
-                      child: Text(
-                        'Los Angeles',
-                        style: theme.textTheme.caption.copyWith(
-                          color: Palette.primaryColor,
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        InkWell(
-                          onTap: _handleSellerPressed,
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                            left: 8,
+                            bottom: 8,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 4.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Palette.tertiaryColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                MaterialCommunityIcons.account_circle,
-                                color: Palette.secondaryColor,
+                                MaterialCommunityIcons.alarm,
+                                size: 15,
+                                color: Colors.white,
                               ),
                               SizedBox(
-                                width: 8.0,
+                                width: 4.0,
                               ),
                               Text(
-                                '5.0',
-                                style: theme.textTheme.bodyText2.copyWith(
-                                  color: Palette.secondaryColor,
+                                'Use until 10.11.2020',
+                                style: TextStyle(
+                                  color: Colors.white,
                                 ),
                               ),
-                              Icon(
-                                MaterialCommunityIcons.star,
-                                color: Palette.primaryColor,
-                                size: 16.0,
-                              )
                             ],
                           ),
                         ),
-                        Spacer(),
-                        Icon(
-                          MaterialCommunityIcons.heart_outline,
-                          color: Palette.secondaryColor,
-                          size: 20.0,
-                        ),
-                      ],
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '\$100',
+                        style: theme.textTheme.subtitle1.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: Palette.secondaryColor,
+                        ),
+                      ),
+                      Text(
+                        'The Free People',
+                        style: theme.textTheme.subtitle2.copyWith(
+                          height: 1.5,
+                          fontWeight: FontWeight.w400,
+                          color: Palette.secondaryColor,
+                        ),
+                      ),
+                      Text(
+                        'Peasant Top Shirt',
+                        style: theme.textTheme.subtitle2.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Palette.secondaryColor,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                        ),
+                        child: Text(
+                          'Los Angeles',
+                          style: theme.textTheme.caption.copyWith(
+                            color: Palette.primaryColor,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          InkWell(
+                            onTap: _handleSellerPressed,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  MaterialCommunityIcons.account_circle,
+                                  color: Palette.secondaryColor,
+                                ),
+                                SizedBox(
+                                  width: 8.0,
+                                ),
+                                Text(
+                                  '5.0',
+                                  style: theme.textTheme.bodyText2.copyWith(
+                                    color: Palette.secondaryColor,
+                                  ),
+                                ),
+                                Icon(
+                                  MaterialCommunityIcons.star,
+                                  color: Colors.yellow,
+                                  size: 16.0,
+                                )
+                              ],
+                            ),
+                          ),
+                          Spacer(),
+                          Icon(
+                            MaterialCommunityIcons.heart_outline,
+                            color: Palette.secondaryColor,
+                            size: 20.0,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

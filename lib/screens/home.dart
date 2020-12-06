@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
         title: Text(
           'FutureSale',
           style: TextStyle(
-            color: Color.fromRGBO(89, 115, 147, 1),
+            color: Palette.tertiaryColor,
             fontWeight: FontWeight.w900,
             fontSize: 24,
           ),
@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
                 FirebaseAuth.instance.signOut();
               },
               icon: Icon(
-                MaterialCommunityIcons.cart_outline,
+                SimpleLineIcons.handbag,
                 color: Color.fromRGBO(89, 115, 147, 1),
               ),
             ),
@@ -50,8 +50,8 @@ class _HomeState extends State<Home> {
       body: _screens[_currentTab],
       bottomNavigationBar: FABBottomAppBar(
         // notchedShape: CircularNotchedRectangle(),
-        color: Palette.primaryColor,
-        selectedColor: Palette.secondaryColor,
+        color: Palette.secondaryColor,
+        selectedColor: Palette.primaryColor,
         items: [
           FABBottomAppBarItem(iconData: MaterialCommunityIcons.home_outline),
           FABBottomAppBarItem(iconData: MaterialCommunityIcons.heart_outline),
