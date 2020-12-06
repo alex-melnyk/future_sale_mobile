@@ -1,13 +1,13 @@
 import 'dart:math' show Random;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:future_sale/models/models.dart';
 import 'package:future_sale/screens/goods/goods.dart';
 import 'package:future_sale/screens/screens.dart';
+import 'package:future_sale/widgets/screen_container.dart';
 
 class CatalogueList extends StatefulWidget {
   @override
@@ -38,23 +38,74 @@ class _CatalogueListState extends State<CatalogueList> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Catalogue'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-            },
-            icon: Icon(MaterialCommunityIcons.filter),
-          ),
-        ],
-      ),
-      body: Container(
+      // appBar: AppBar(
+      //   title: Text('Catalogue'),
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () {
+      //         FirebaseAuth.instance.signOut();
+      //       },
+      //       icon: Icon(MaterialCommunityIcons.filter),
+      //     ),
+      //   ],
+      // ),
+      body: ScreenContainer(
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 16.0
+                ),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Text(
+                        'FutureSale',
+                        style: theme.textTheme.headline5.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        MaterialCommunityIcons.cart_outline
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _buildSearch(),
+              _buildFilters(),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.all(24.0),
+                width: double.infinity,
+                color: primaryColor,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Future Sale',
+                      style: theme.textTheme.headline6,
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    OutlineButton(
+                      onPressed: () {},
+                      child: Text('Get start'),
+                    ),
+                  ],
+                ),
+              ),
               _buildSection(
                 'Future Sale',
               ),
@@ -92,7 +143,9 @@ class _CatalogueListState extends State<CatalogueList> {
             children: [
               Text(
                 sectionTitle,
-                style: theme.textTheme.subtitle1.copyWith(fontWeight: FontWeight.w600),
+                style: theme.textTheme.subtitle1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Text(
                 'View all',
@@ -136,6 +189,90 @@ class _CatalogueListState extends State<CatalogueList> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _buildSearch() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 8.0,
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.zero,
+          prefixIcon: Icon(
+            MaterialIcons.search,
+            color: primaryColor,
+          ),
+          hintText: 'Search',
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(
+              color: primaryColor,
+              width: 2,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(
+              color: primaryColor,
+              width: 2,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilter(Color color, String label) {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: 4.0,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 8.0,
+      ),
+      decoration: BoxDecoration(
+        color: primaryColor,
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 15,
+            height: 15,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          Text(
+            label,
+            style: theme.textTheme.subtitle1,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilters() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _buildFilter(Colors.white, 'Categories'),
+          _buildFilter(Colors.lightBlue, 'Future Sale'),
+          _buildFilter(Colors.lightGreen, 'Sale now'),
+        ],
+      ),
     );
   }
 
@@ -230,7 +367,7 @@ class _CatalogueListState extends State<CatalogueList> {
                               SizedBox(
                                 width: 4.0,
                               ),
-                              Text('10'),
+                              Text(images.length.toString()),
                             ],
                           ),
                         ),
