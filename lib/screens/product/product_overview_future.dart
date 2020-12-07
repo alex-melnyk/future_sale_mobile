@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:future_sale/models/models.dart';
+import 'package:future_sale/screens/screens.dart';
 import 'package:future_sale/utils/palette.dart';
 import 'package:future_sale/widgets/widgets.dart';
 
@@ -34,155 +35,279 @@ class _ProductOverviewFutureState extends State<ProductOverviewFuture> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Product Details'),
-      ),
       body: ScreenContainer(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
                 mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildGallery(),
                   Container(
-                    width: 100,
-                    height: 100,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                    child: _buildGallery(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        _buildTitle(),
+                        Container(
+                          width: double.infinity,
+                          child: Text(
+                            widget.product.name,
+                            style: theme.textTheme.headline5.copyWith(
+                              color: Palette.secondaryColor,
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        _buildDescription(),
+                        Divider(),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'How to buy',
+                                style: theme.textTheme.subtitle1.copyWith(
+                                  color: Palette.secondaryColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Icon(MaterialCommunityIcons.chevron_right),
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                        _buildSellerDetails(),
+                        Divider(),
+                        _buildSpecifications(),
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: _buildTitle(),
-                  ),
+                  _buildButtons(),
                 ],
               ),
-              _buildStatLine(),
-              Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: 8,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text('BUY'),
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text('RENT'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _buildProductPhotos(),
-              Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: 16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Description',
-                      style: theme.textTheme.headline5.copyWith(
-                        color: Palette.primaryColor,
-                      ),
-                    ),
-                    Text(
-                      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged',
-                      style: theme.textTheme.subtitle1.copyWith(
-                        color: Palette.secondaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _buildSpecifications(),
-            ],
-          ),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: DetailsHeader(actionColor: Colors.white,),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildGallery() {
+    final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
 
-    return FutureBuilder(
-      future: _imageUrlsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          final imagesUrls = snapshot.data ?? [];
+    return Container(
+      height: 320,
+      child: FutureBuilder(
+        future: _imageUrlsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final imagesUrls = snapshot.data ?? [];
 
-          return PageView(
-            children: imagesUrls.map<Widget>((e) {
-              return Container(
-                width: screenSize.width,
-                child: Image(
-                  image: NetworkImage(e),
-                  fit: BoxFit.cover,
+            return Stack(
+              children: [
+                PageView(
+                  children: imagesUrls.map<Widget>((e) {
+                    return Container(
+                      width: screenSize.width,
+                      child: Image(
+                        image: NetworkImage(e),
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  }).toList(growable: false),
                 ),
-              );
-            }).toList(growable: false),
-          );
-        }
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    // height: 60,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: Palette.tertiaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                MaterialCommunityIcons.alarm,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'User until 10.11.2020',
+                                style: theme.textTheme.caption.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: Palette.quaternaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Like a new',
+                                style: theme.textTheme.caption.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Spacer(),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                MaterialCommunityIcons.camera,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                '1/10',
+                                style: theme.textTheme.caption.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            );
+          }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        return Container();
-      },
+          return Container();
+        },
+      ),
     );
   }
 
   Widget _buildTitle() {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      padding: const EdgeInsets.symmetric(),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.product.name,
-            style: theme.textTheme.headline5.copyWith(
-              color: Palette.secondaryColor,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                '\$100',
+                style: theme.textTheme.headline5.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Book for ',
+                style: theme.textTheme.bodyText2.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: Palette.secondaryColor,
+                ),
+              ),
+              Text(
+                '\$10',
+                style: theme.textTheme.bodyText2.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: Palette.tertiaryColor,
+                ),
+              ),
+              Spacer(),
+              Icon(MaterialCommunityIcons.heart_outline),
+            ],
           ),
           SizedBox(
-            height: 8,
+            height: 16,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDescription() {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 8,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
           Text(
-            'Category: Electronics',
+            'Description',
             style: theme.textTheme.subtitle1.copyWith(
               color: Palette.secondaryColor,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(
-            height: 8,
-          ),
+          SizedBox(height: 8),
           Text(
-            'Type: NEW',
-            style: theme.textTheme.subtitle1.copyWith(
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.',
+            style: theme.textTheme.bodyText2.copyWith(
               color: Palette.secondaryColor,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -259,72 +384,81 @@ class _ProductOverviewFutureState extends State<ProductOverviewFuture> {
     );
   }
 
-  Widget _buildProductPhotos() {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: 16,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            // width: 80,
-            // height: 80,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              // color: Palette.primaryColor,
-              borderRadius: BorderRadius.circular(8),
+  Widget _buildSellerDetails() {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => SellerLanding(),
+        ));
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          vertical: 8,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: Image(
+                image: AssetImage('assets/images/user_photo.jpg'),
+              ),
             ),
-            child: Icon(
-              MaterialCommunityIcons.image,
-              size: 80,
-              color: Palette.primaryColor,
+            SizedBox(
+              width: 16,
             ),
-          ),
-          Container(
-            // width: 80,
-            // height: 80,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              // color: Palette.primaryColor,
-              borderRadius: BorderRadius.circular(8),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Julia Roberts',
+                        style: theme.textTheme.headline6.copyWith(
+                          color: Palette.secondaryColor,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '5.0',
+                        style: theme.textTheme.bodyText2.copyWith(
+                          height: 1.5,
+                          color: Palette.secondaryColor,
+                        ),
+                      ),
+                      Icon(
+                        MaterialCommunityIcons.star,
+                        size: 16,
+                        color: Colors.yellow,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    'Los Angeles',
+                    style: theme.textTheme.bodyText2.copyWith(
+                      height: 1.5,
+                      color: Palette.secondaryColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: Icon(
-              MaterialCommunityIcons.image,
-              size: 80,
-              color: Palette.primaryColor,
-            ),
-          ),
-          Container(
-            // width: 80,
-            // height: 80,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              // color: Palette.primaryColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              MaterialCommunityIcons.image,
-              size: 80,
-              color: Palette.primaryColor,
-            ),
-          ),
-          Container(
-            // width: 80,
-            // height: 80,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              // color: Palette.primaryColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              MaterialCommunityIcons.image,
-              size: 80,
-              color: Palette.primaryColor,
-            ),
-          ),
-        ],
+            Icon(MaterialCommunityIcons.chevron_right),
+          ],
+        ),
       ),
     );
   }
@@ -336,116 +470,182 @@ class _ProductOverviewFutureState extends State<ProductOverviewFuture> {
       margin: EdgeInsets.symmetric(
         vertical: 16,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Product Lifecycle',
+              style: theme.textTheme.subtitle1.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Palette.secondaryColor,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(
+                vertical: 8,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    margin: EdgeInsets.symmetric(
+                      vertical: 16,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.deepOrange,
+                        width: 2,
+                      )
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '150kg',
+                          style: theme.textTheme.subtitle2.copyWith(
+                            color: Palette.secondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'CO2/year',
+                          style: theme.textTheme.subtitle2.copyWith(
+                            color: Palette.secondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          MaterialCommunityIcons.periodic_table_co2,
+                          size: 64,
+                          color: Palette.primaryColor,
+                        ),
+                        Text(
+                          '0% carbon free',
+                          style: theme.textTheme.subtitle1.copyWith(
+                            color: Palette.secondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          MaterialCommunityIcons.water,
+                          size: 64,
+                          color: Palette.primaryColor,
+                        ),
+                        Text(
+                          '300 saved',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.subtitle1.copyWith(
+                            color: Palette.secondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(16),
+      color: Colors.white,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            'Product Lifecycle',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headline5.copyWith(
-              color: Palette.secondaryColor,
+          Expanded(
+            child: InkWell(
+              onTap: () {},
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 16,
+                ),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: Palette.tertiaryColor,
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  'Rent',
+                  style: theme.textTheme.headline6.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: Palette.tertiaryColor,
+                  ),
+                ),
+              ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              vertical: 8,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  margin: EdgeInsets.symmetric(
-                    vertical: 16,
+          SizedBox(width: 16),
+          Expanded(
+            child: InkWell(
+              onTap: () {},
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 16,
+                ),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: Palette.tertiaryColor,
+                    width: 1,
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Palette.primaryColor,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '2300',
-                        style: theme.textTheme.subtitle1.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'KG',
-                        style: theme.textTheme.bodyText2.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      Text(
-                        'CO2/year',
-                        style: theme.textTheme.subtitle1.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  color: Palette.tertiaryColor,
+                ),
+                child: Text(
+                  'Book',
+                  style: theme.textTheme.headline6.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
                   ),
                 ),
-                Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        MaterialCommunityIcons.water,
-                        size: 64,
-                        color: Palette.primaryColor,
-                      ),
-                      Text(
-                        '3000',
-                        style: theme.textTheme.headline6.copyWith(
-                          color: Palette.secondaryColor,
-                        ),
-                      ),
-                      Text(
-                        'litters\nsaved',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyText2.copyWith(
-                          color: Palette.secondaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        MaterialCommunityIcons.periodic_table_co2,
-                        size: 64,
-                        color: Palette.primaryColor,
-                      ),
-                      Text(
-                        '0%',
-                        style: theme.textTheme.headline6.copyWith(
-                          color: Palette.secondaryColor,
-                        ),
-                      ),
-                      Text(
-                        'carbon\nfree',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyText2.copyWith(
-                          color: Palette.secondaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
