@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:future_sale/screens/catalogue/catalogue.dart';
-import 'package:future_sale/screens/goods/goods.dart';
 import 'package:future_sale/utils/utils.dart';
 import 'package:future_sale/widgets/widgets.dart';
+
+import 'goods/goods.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,6 +14,24 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final List<Widget> _screens = [];
   int _currentTab = 0;
+
+  @override
+  void initState() {
+    _screens.addAll([
+      CatalogueList(),
+      Container(
+        color: Colors.red,
+      ),
+      Container(
+        color: Colors.green,
+      ),
+      Container(
+        color: Colors.blue,
+      ),
+    ]);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +79,7 @@ class _HomeState extends State<Home> {
         }),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute<void>(
-            builder: (_) => GoodsCreate(),
-          ));
-        },
+        onPressed: _handlePlusPressed,
         child: Container(
           width: double.infinity,
           height: double.infinity,
@@ -89,21 +103,109 @@ class _HomeState extends State<Home> {
     );
   }
 
-  @override
-  void initState() {
-    _screens.addAll([
-      CatalogueList(),
-      Container(
-        color: Colors.red,
-      ),
-      Container(
-        color: Colors.green,
-      ),
-      Container(
-        color: Colors.blue,
-      ),
-    ]);
+  void _handlePlusPressed() async {
+    final theme = Theme.of(context);
 
-    super.initState();
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'What do you want to sell?',
+                style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.w600, color: Palette.secondaryColor),
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Palette.tertiaryColor,
+                      width: 1,
+                    ),
+                    color: Palette.tertiaryColor,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        MaterialCommunityIcons.alarm,
+                        size: 32,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Text(
+                        'Future Sale',
+                        style: theme.textTheme.headline6.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Palette.tertiaryColor,
+                      width: 1,
+                    ),
+                    color: Palette.tertiaryColor,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        FontAwesome.money,
+                        size: 32,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Text(
+                        'Sale now',
+                        style: theme.textTheme.headline6.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => GoodsCreate(),
+    ));
   }
 }
